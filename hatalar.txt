@@ -1,0 +1,1 @@
+dosya okuma yaptıktan sonra f1-f2 işlemi hata veriyor

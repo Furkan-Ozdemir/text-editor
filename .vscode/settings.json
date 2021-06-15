@@ -1,0 +1,6 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "d:\\Chrome Downloads\\Enigma-Edited2.jar"
+    ]
+}
