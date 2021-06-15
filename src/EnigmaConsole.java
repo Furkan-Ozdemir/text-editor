@@ -4,6 +4,8 @@ import enigma.event.TextMouseEvent;
 import enigma.event.TextMouseListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Scanner;
+
 import enigma.console.TextAttributes;
 import java.awt.Color;
 
@@ -17,7 +19,7 @@ public class EnigmaConsole {
     static int cursorx = 1, cursory = 2 , lastCursorX=0, selectionX,selectionY,endX,endY;
     static int initialLineNumber = 1;
     static int currentLine = 1;
-    String selectedString="", cutString="",copiedString="";
+    String selectedString="", cutString="",copiedString="", stringToFind="";
 
     // ------ Standard variables for keyboard and mouse 2 --------------------------
     public int mousepr; // mouse pressed?
@@ -148,11 +150,37 @@ public class EnigmaConsole {
                     keypr = 0;
 
                 }
-                if (rkey == KeyEvent.VK_F6) {
-                    keypr = 0;
+                if (rkey == KeyEvent.VK_F6) { // find
+                    // mll to stringi çağır eşit olan var mı diye bak
+                    cnt.setCursorPosition(60, 58);
+                    System.out.print("Phrase to find:");
+                    Scanner sc= new Scanner(System.in); 
+                    stringToFind = sc.nextLine();
+                    String strArray[] = MultiLinkedList.mllToString();
 
+                    for (int i = 0; i < strArray.length; i++) {
+                        if(strArray[i].contains(stringToFind)){
+                            //gidip highlight etsin
+                            int index = strArray[i].indexOf(stringToFind);
+                            // int temp = index+2-2;
+                            cn.setTextAttributes(att1);
+                            for (int j = 0; j < stringToFind.length(); j++) {
+                                cnt.setCursorPosition(index+2+j,cursory-1);
+                                System.out.print(MultiLinkedList.searchByIndex(cursory-1,index+2-2+j).getChar());
+                                
+                            }
+                            cn.setTextAttributes(att0);
+                            // System.out.print("X");
+                            break;
+                        }
+                        
+                    }
+                     cursory--;
+                     cursorx++;
+                    sc.close();
+                    keypr = 0;
                 }
-                if (rkey == KeyEvent.VK_F7) {
+                if (rkey == KeyEvent.VK_F7) {// replace
                     keypr = 0;
 
                 }
@@ -357,15 +385,11 @@ public class EnigmaConsole {
                     }
 
                 }
-                // cnt.setCursorPosition(15, 15);
-            //    Editor.mll.display(15, 15, keypr);
-               cnt.setCursorPosition(60,60);
+             
+               cnt.setCursorPosition(15,15);
                System.out.print(Editor.mll.sizeChar());
                System.out.print("cursorx" + cursorx + "cursory" + cursory);
-//                 System.out.print(cursorx+"+"+cursory);
-//                
                 Editor.mll.display(cursorx, cursory, keypr);
-//                cnt.setCursorPosition(cursorx, cursory);
                 keypr = 0; // last action
                cnt.setCursorPosition(cursorx,cursory);
 
