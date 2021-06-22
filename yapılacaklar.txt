@@ -1,9 +1,8 @@
 herhangi bir yerden karakter silmek/eklemek cursor ile
 
-•	Delete
-•	Home/End
 •	PageUp/PageDown
 •	Insert (to change the writing mode; insert/overwrite)
 •	Function keys for various purposes
-
 enter a basınca \n eklemesin dosyaya yazdırırken eklesin.
+find için -> seç önce sonra find a bas hepsini highlight etsin
+alignment

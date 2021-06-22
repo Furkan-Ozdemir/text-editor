@@ -10,16 +10,17 @@ import enigma.console.TextAttributes;
 import java.awt.Color;
 
 public class EnigmaConsole {
-    public static enigma.console.Console cn = Enigma.getConsole("CENG Editor", 100, 30, 16, 1); // col,row,fontsize,fonttype
+    public static enigma.console.Console cn = Enigma.getConsole("CENG Editor", 100, 34, 16, 1); // col,row,fontsize,fonttype
     public static enigma.console.TextWindow cnt = cn.getTextWindow();
     public static TextAttributes att0 = new TextAttributes(Color.white, Color.black); // foreground, background color
     public static TextAttributes att1 = new TextAttributes(Color.black, Color.white);
     public TextMouseListener tmlis;
     public KeyListener klis;
-    static int cursorx = 1, cursory = 2 , lastCursorX=0, selectionX,selectionY,endX,endY;
+    static int cursorx = 1, cursory = 2, lastCursorX = 0, selectionX, selectionY, endX, endY, lastCursorPosition = 0;
     static int initialLineNumber = 1;
-    static int currentLine = 1;
-    String selectedString="", cutString="",copiedString="", stringToFind="";
+    static int currentLine = 1, index;
+    static String selectedString = "", cutString = "", copiedString = "", stringToFind = "", foundString = "",
+            stringToReplace = "";
 
     // ------ Standard variables for keyboard and mouse 2 --------------------------
     public int mousepr; // mouse pressed?
@@ -32,8 +33,7 @@ public class EnigmaConsole {
 
     EnigmaConsole() throws Exception { // --- Contructor
 
-        @SuppressWarnings("unused")
-		Editor editor = new Editor();
+        Editor editor = new Editor();
         // ------ Standard code for keyboard and mouse 2 -------- Do not change -----
         tmlis = new TextMouseListener() {
             public void mouseClicked(TextMouseEvent arg0) {
@@ -76,8 +76,7 @@ public class EnigmaConsole {
         cn.getTextWindow().addKeyListener(klis);
         // --------------------------------------------------------------------------
 
-        @SuppressWarnings("unused")
-		int curtype;
+        int curtype;
         curtype = cnt.getCursorType(); // default:2 (invisible) 0-1:visible
         cnt.setCursorType(0);
         cn.setTextAttributes(att0);
@@ -104,87 +103,89 @@ public class EnigmaConsole {
                     endX = cursorx;
                     endY = cursory;
 
-                    cnt.setCursorPosition(selectionX,selectionY);
+                    cnt.setCursorPosition(selectionX, selectionY);
 
-                    for (int i = selectionX; i < endX+1; i++) {
-                       selectedString= selectedString.concat(Character.toString(MultiLinkedList.searchByIndex(initialLineNumber,i-2).getChar()));
-                       System.out.print( MultiLinkedList.searchByIndex(initialLineNumber,i-2).getChar());
+                    for (int i = selectionX; i < endX + 1; i++) {
+                        selectedString = selectedString.concat(
+                                Character.toString(MultiLinkedList.searchByIndex(initialLineNumber, i - 2).getChar()));
+                        System.out.print(MultiLinkedList.searchByIndex(initialLineNumber, i - 2).getChar());
                     }
                     cn.setTextAttributes(att0);
-                   
                     keypr = 0;
                 }
                 if (rkey == KeyEvent.VK_F3) { // cut
                     for (int i = 0; i < selectedString.length(); i++) {
                         Editor.mll.delete(endY - 1, endX - 2);
-                        cnt.setCursorPosition(cursorx,cursory);
+                        cnt.setCursorPosition(cursorx, cursory);
                         System.out.print(" ");
                         endX--;
                         cursorx--;
                     }
                     cutString = selectedString;
-                    selectedString="";
+                    selectedString = "";
                     keypr = 0;
                 }
                 if (rkey == KeyEvent.VK_F4) { // copy
-                   copiedString=selectedString;
+                    copiedString = selectedString;
                     keypr = 0;
                 }
                 if (rkey == KeyEvent.VK_F5) {// paste
-                     if(cutString.equals("")){
-                        //copylenmişi yapıştır
+                    if (cutString.equals("")) {
+                        // copylenmişi yapıştır
                         for (int i = 0; i < copiedString.length(); i++) {
                             Editor.mll.addChar(initialLineNumber, copiedString.charAt(i));
-                            Editor.mll.display(++cursorx,cursory, 1);
+                            Editor.mll.display(++cursorx, cursory, 1); // yazdırıp sağa ilerliyor.
                         }
-                        copiedString="";
-                    }
-                    else{
-                        //cutlanmışı yapıştır
+                        copiedString = "";
+                    } else {
+                        // cutlanmışı yapıştır
                         for (int i = 0; i < cutString.length(); i++) {
                             Editor.mll.addChar(initialLineNumber, cutString.charAt(i));
-                            Editor.mll.display(++cursorx,cursory, 1);
+                            Editor.mll.display(++cursorx, cursory, 1);
                         }
-                        cutString="";
+                        cutString = "";
                     }
                     keypr = 0;
 
                 }
                 if (rkey == KeyEvent.VK_F6) { // find
                     // mll to stringi çağır eşit olan var mı diye bak
-                    cnt.setCursorPosition(60, 58);
-                    System.out.print("Phrase to find:");
-                    Scanner sc= new Scanner(System.in); 
-                    stringToFind = sc.nextLine();
-                    String strArray[] = MultiLinkedList.mllToString();
+                    //
 
-                    for (int i = 0; i < strArray.length; i++) {
-                        if(strArray[i].contains(stringToFind)){
-                            //gidip highlight etsin
-                            int index = strArray[i].indexOf(stringToFind);
-                            // int temp = index+2-2;
-                            cn.setTextAttributes(att1);
-                            for (int j = 0; j < stringToFind.length(); j++) {
-                                cnt.setCursorPosition(index+2+j,cursory-1);
-                                System.out.print(MultiLinkedList.searchByIndex(cursory-1,index+2-2+j).getChar());
-                                
-                            }
-                            cn.setTextAttributes(att0);
-                            // System.out.print("X");
-                            break;
-                        }
-                        
-                    }
-                     cursory--;
-                     cursorx++;
-                    sc.close();
+                    MultiLinkedList.find();
+
+                    // cursory--;
+                    // cursorx++;
+                    // sc.close();
                     keypr = 0;
                 }
                 if (rkey == KeyEvent.VK_F7) {// replace
+                    // iki kelimenin de aynı uzunlukta olması gerekiyor.
+                    Scanner sc = new Scanner(System.in);
+                    cnt.setCursorPosition(30, 30);
+                    System.out.print("Enter string:");
+                    stringToReplace = sc.nextLine();
+
+                    for (int i = 0; i < selectedString.length(); i++) {
+
+                        Editor.mll.delete(cursory - 1, cursorx - 2); // kelimeyi silecek sondan başlayarak
+                        cnt.setCursorPosition(cursorx, cursory);
+                        System.out.print(" ");
+                        cursorx--;
+                    }
+                    for (int i = 0; i < selectedString.length(); i++) {
+                        Editor.mll.addChar(initialLineNumber, stringToReplace.charAt(i));
+                        cursorx++;
+                        Editor.mll.display(cursorx, cursory, 1);
+
+                    }
+                    // cursorx++;
                     keypr = 0;
+                    sc.close();
 
                 }
-                if (rkey == KeyEvent.VK_F8) {
+                if (rkey == KeyEvent.VK_F8) {// next'
+                    MultiLinkedList.next();
                     keypr = 0;
 
                 }
@@ -205,66 +206,62 @@ public class EnigmaConsole {
                     keypr = 0;
                 }
                 if (rkey == KeyEvent.VK_PAGE_UP) {
-                	currentLine--;
+                    currentLine--;
                     keypr = 0;
                 }
                 if (rkey == KeyEvent.VK_HOME) {
-                	cursorx = 2;
+                    cursorx = 2;
                     keypr = 0;
                 }
                 if (rkey == KeyEvent.VK_END) {
-                	cursorx = Editor.mll.sizeChar_line(initialLineNumber) + 2;
+                    cursorx = Editor.mll.sizeChar_line(initialLineNumber) + 2;
                     keypr = 0;
                 }
                 if (rkey == KeyEvent.VK_PAGE_DOWN) {
-                	currentLine++;
+                    currentLine++;
                     keypr = 0;
                 }
                 if (rkey == KeyEvent.VK_BACK_SPACE) {
                     // cursorı 2 kere sola çekiyor.
-                    if (cursory >= 2) 
-                    {
-                    	if (cursorx >= 2) 
-                    	{
-                    		// int cursorxHolder = cursorx;
-                    		// int cursoryHolder = cursory;
-//                    		Editor.mll.deleteLastChar(initialLineNumber);
-                    		Editor.mll.delete(cursory - 1, cursorx - 2);
-                    		cnt.setCursorPosition(cursorx,cursory);
+                    if (cursory >= 2) {
+                        if (cursorx >= 2) {
+                            // int cursorxHolder = cursorx;
+                            // int cursoryHolder = cursory;
+                            // Editor.mll.deleteLastChar(initialLineNumber);
+                            Editor.mll.delete(cursory - 1, cursorx - 2);
+                            cnt.setCursorPosition(cursorx, cursory);
                             System.out.print(" ");
-                    		// cursorx = 2;
-                    		// cursory = 2;
-                    		// Editor.mll.display(cursorx, cursory, keypr);
-                    		// cursorx = cursorxHolder;
-                    		// cursory = cursoryHolder;
-                    		
-//	                        cnt.setCursorPosition(cursorx, cursory);
-//	                        System.out.print(" ");
-	                        cursorx--;
-						}
-                    	else 
-                    	{
-                    		cursorx = lastCursorX;
+                            // cursorx = 2;
+                            // cursory = 2;
+                            // Editor.mll.display(cursorx, cursory, keypr);
+                            // cursorx = cursorxHolder;
+                            // cursory = cursoryHolder;
+
+                            // cnt.setCursorPosition(cursorx, cursory);
+                            // System.out.print(" ");
+                            cursorx--;
+                        } else {
+                            cursorx = lastCursorX;
                             cursory--;
                             initialLineNumber--;
                             // int cursorxHolder = cursorx;
-                    		// int cursoryHolder = cursory;
-//                            Editor.mll.deleteLastChar(initialLineNumber);
+                            // int cursoryHolder = cursory;
+                            // Editor.mll.deleteLastChar(initialLineNumber);
                             Editor.mll.delete(cursory - 1, cursorx - 2);
-                            cnt.setCursorPosition(cursorx,cursory);
+                            cnt.setCursorPosition(cursorx, cursory);
                             System.out.print(" ");
                             // cursorx = 2;
-                    		// cursory = 2;
-                    		// Editor.mll.display(cursorx, cursory, keypr);
-//                    		cnt.setCursorPosition(cursorx, cursory);
-                    		// cursorx = cursorxHolder;
-                    		// cursory = cursoryHolder;
-                    		
-//                            cnt.setCursorPosition(cursorx, cursory);
-//                            System.out.print(" ");
-	                    }
+                            // cursory = 2;
+                            // Editor.mll.display(cursorx, cursory, keypr);
+                            // cnt.setCursorPosition(cursorx, cursory);
+                            // cursorx = cursorxHolder;
+                            // cursory = cursoryHolder;
+
+                            // cnt.setCursorPosition(cursorx, cursory);
+                            // System.out.print(" ");
+                        }
+                    } else if (cursorx == 2 && cursory == 2) {
                     }
-                    else if (cursorx == 2 && cursory == 2) {}
                     keypr = 0;
                 }
                 if (rkey == KeyEvent.VK_SPACE) {
@@ -294,7 +291,7 @@ public class EnigmaConsole {
                     cnt.setCursorPosition(cursorx, cursory);
                 }
                 if (rkey == KeyEvent.VK_UP) {
-                	initialLineNumber--;
+                    initialLineNumber--;
                     if (cursory >= 2)
                         cursory--;
                     keypr = 0;
@@ -302,7 +299,7 @@ public class EnigmaConsole {
                     cnt.setCursorPosition(cursorx, cursory);
                 }
                 if (rkey == KeyEvent.VK_DOWN) {
-                	initialLineNumber++;
+                    initialLineNumber++;
                     if (cursory < 22)
                         cursory++;
                     keypr = 0;
@@ -385,13 +382,13 @@ public class EnigmaConsole {
                     }
 
                 }
-             
-               cnt.setCursorPosition(15,15);
-               System.out.print(Editor.mll.sizeChar());
-               System.out.print("cursorx" + cursorx + "cursory" + cursory);
+
+                cnt.setCursorPosition(15, 15);
+                System.out.print(Editor.mll.sizeChar());
+                System.out.print("cursorx" + cursorx + "cursory" + cursory);
                 Editor.mll.display(cursorx, cursory, keypr);
                 keypr = 0; // last action
-               cnt.setCursorPosition(cursorx,cursory);
+                cnt.setCursorPosition(cursorx, cursory);
 
             }
 

@@ -132,7 +132,9 @@ public class Editor {
             BufferedWriter bw = new BufferedWriter(fileWritter);
             String[] arr = MultiLinkedList.mllToString();
             for (int i = 1; i < arr.length; i++) {
-                bw.write(arr[i]);
+                if(!arr[i].equals(""))
+                    bw.write(arr[i]+"\n");
+                
             }
             bw.close();
         } catch (IOException e) {
