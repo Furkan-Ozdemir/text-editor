@@ -1,6 +1,3 @@
-import java.util.Arrays;
-
-import enigma.core.Enigma;
 
 public class MultiLinkedList {
 	static LineNode head; // static'e çevir
@@ -130,45 +127,6 @@ public class MultiLinkedList {
 		}
 	}
 
-	// public void display(int x, int y, int keypr, int currentLine) {
-	// if (keypr == 1) {
-	// if (head == null) {
-	// } else {
-	// LineNode temp = null;
-	// CharNode temp2 = null;
-	// if (Editor.mll.sizeLine() <= 20) {
-	// temp = head;
-	// for (int i = 0; i < Editor.mll.sizeLine(); i++) {
-	// temp2 = temp.getRight();
-	// while (temp2 != null) {
-	// EnigmaConsole.cnt.setCursorPosition(x, y);
-	// System.out.print(temp2.getChar());
-	// temp2 = temp2.getNext();
-	// }
-	// temp = temp.getDown();
-	// }
-	// } else {
-	// temp = head;
-	// do {
-	// temp.getDown();
-	// } while (temp.getLineNum() < currentLine);
-	//
-	// for (int i = 0; i < 20; i++) {
-	// temp2 = temp.getRight();
-	// while (temp2 != null) {
-	// EnigmaConsole.cnt.setCursorPosition(x, y);
-	// System.out.print(temp2.getChar());
-	// temp2 = temp2.getNext();
-	// }
-	// temp = temp.getDown();
-	// }
-	// }
-	// }
-	// } else {
-	// }
-	//
-	// }
-
 	public static String[] mllToString() {
 		String[] arr = new String[21];
 		for (int i = 0; i < arr.length; i++) {
@@ -188,25 +146,6 @@ public class MultiLinkedList {
 		}
 		return arr;
 	}
-
-	///////////////////// daha hazır değil, burası düzenlenecek
-	///////////////////// //////////////////////////
-	// public int addToNode(int initialLineNum, int index, Object item) {
-	// int indexCounter = 0;
-	//
-	// if (head == null) {
-	// } else {
-	// LineNode temp = head;
-	//
-	// do {
-	// temp.getDown();
-	// } while (temp.getLineNum() < initialLineNum);
-	//
-	// }
-	// return indexCounter;
-	// }
-	///////////////////// daha hazır değil, burası düzenlenecek
-	///////////////////// //////////////////////////
 
 	public void delete(int row, int column) {
 		LineNode temporaryLine, temporaryLine2;
@@ -256,34 +195,35 @@ public class MultiLinkedList {
 		}
 	}
 
-	// public void deleteLastChar(int LineNum) // not done yet!
-	// {
-	// if (head == null)
-	// System.out.println("linked list is empty");
-	// else {
-	// LineNode line = head;
-	// line.setLineNum(LineNum); // needs a care
-	// CharNode previous = null;
+	public void deleteLastChar(int LineNum) // not done yet!
+	{
+		if (head == null)
+			System.out.println("linked list is empty");
+		else {
+			LineNode line = head;
+			line.setLineNum(LineNum); // needs a care
+			CharNode previous = null;
 
-	// while (line != null) {
-	// if (LineNum == line.getLineNum()) {
-	// CharNode character = line.getRight();
-	// if (character == null) {
-	// } else {
-	// while (character.getNext() != null) {
-	// previous = character;
-	// character = character.getNext();
-	// }
-	// if (previous != null)
-	// previous.setNext(character.getNext());
-	// else {
-	// }
-	// }
-	// break;
-	// }
-	// }
-	// }
-	// }
+			while (line != null) {
+				if (LineNum == line.getLineNum()) {
+					CharNode character = line.getRight();
+					if (character == null) {
+					} else {
+						while (character.getNext() != null) {
+							previous = character;
+							character = character.getNext();
+						}
+						if (previous != null)
+							previous.setNext(character.getNext());
+						else {
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+
 	public static CharNode searchByIndex(int row, int column) {
 		LineNode temporaryLine;
 		CharNode temporaryChar;
@@ -342,32 +282,6 @@ public class MultiLinkedList {
 	}
 
 	public static void next() {
-		/*
-		 * eğer print i yorumdan çıkarırsan çalıştığını anlıyorsun her bulduğu yere
-		 * yazdırarak ilerliyor bastıkça ama printi yoruma alınca çalıştığı belli
-		 * olmuyor çünkü enigmaconsolda loop un en sonundaki setcursorposition cursorı
-		 * en son yazılan yere getiriyor. next e bastıkça replace edilebilir. replace
-		 * edilecek stringi tutarız f7 ye , burdan var olan karakteri silip replace
-		 * edilecek karakteri addChar yaparız
-		 */
-		// if (cursorPositions[nextIndex] != 0) { // sıfırsa oraya eleman atılmamış yani
-
-		// EnigmaConsole.cnt.setCursorPosition(cursorPositions[nextIndex],
-		// EnigmaConsole.cursory);
-		// // System.out.print("x");
-		// Editor.mll.delete(EnigmaConsole.cursory - 1, cursorPositions[nextIndex] - 2);
-		// EnigmaConsole.cnt.setCursorPosition(cursorPositions[nextIndex],
-		// EnigmaConsole.cursory);
-		// System.out.print(EnigmaConsole.stringToReplace);
-
-		// for (int i = 0; i < EnigmaConsole.stringToReplace.length(); i++) {
-		// Editor.mll.addChar(EnigmaConsole.initialLineNumber,
-		// EnigmaConsole.stringToReplace.charAt(i));
-		// }
-
-		// nextIndex++;
-		// } else
-		// return;
 
 		int temp = 0;
 		for (int i = 0; i < cursorPositions.length; i++) { // indexleri küçükten

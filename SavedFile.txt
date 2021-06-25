@@ -1,2 +1,11 @@
-furkan
-merhaba
+CENG Editor
+
+The best Editor in the market.
+With the strong editing capabilities
+
+
+Need to edit in large quantities no worries
+just use the built-in editing tools like
+
+find-replace cut-copy-paste
+

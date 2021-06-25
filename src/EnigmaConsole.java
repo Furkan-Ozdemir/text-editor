@@ -383,9 +383,9 @@ public class EnigmaConsole {
 
                 }
 
-                cnt.setCursorPosition(15, 15);
-                System.out.print(Editor.mll.sizeChar());
-                System.out.print("cursorx" + cursorx + "cursory" + cursory);
+                // cnt.setCursorPosition(15, 15);
+                // System.out.print(Editor.mll.sizeChar());
+                // System.out.print("cursorx" + cursorx + "cursory" + cursory);
                 Editor.mll.display(cursorx, cursory, keypr);
                 keypr = 0; // last action
                 cnt.setCursorPosition(cursorx, cursory);
